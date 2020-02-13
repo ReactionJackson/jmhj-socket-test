@@ -2,8 +2,7 @@
 
 # dependencies
 /node_modules
-/socket-io-server/node_modules
-/socket-io-client/node_modules
+/client/node_modules
 /.pnp
 .pnp.js
 
