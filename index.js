@@ -9,7 +9,7 @@ let dots = []
 let pos = { x: 0, y: 0 }
 
 app.get('/', (req, res) => {
-  res.sendFile(`${ __dirname }/index.html`)
+  res.sendFile(`${ __dirname }/client/build/index.html`)
 })
 
 io.on('connection', socket => {
