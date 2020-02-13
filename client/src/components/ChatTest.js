@@ -16,12 +16,7 @@ const ChatTest = ({ socket }) => {
 
   const handleSubmit = e => {
     e.preventDefault()
-    console.clear()
-    console.log(socket)
-    if(socket) {
-      console.log('i do exist m8.')
-      // socket.broadcast.emit('chat message', msg)
-    }
+    socket.emit('chat message', msg)
     setMsg('')
   }
 
@@ -49,13 +44,12 @@ const ChatTest = ({ socket }) => {
   useEffect(() => {
     if(socket) {
 
-      socket.on('chat message', msg => {
-        setMessages(messages => ([ ...messages, msg ]))
+      socket.on('chat message', newMsg => {
+        setMessages(prevMessages => ([ ...prevMessages, newMsg ]))
       })
 
       socket.on('move box', pos => {
         setPos(pos)
-        console.log(pos)
       })
 
       socket.on('set master', master => {
@@ -67,12 +61,12 @@ const ChatTest = ({ socket }) => {
       })
 
       window.addEventListener('keyup', moveBox)
-
-      return () => {
-        window.removeEventListener('keyup', moveBox)
-      }
-
     }
+
+    return () => {
+      window.removeEventListener('keyup', moveBox)
+    }
+
   }, [ socket ])
 
   return (
@@ -98,11 +92,11 @@ const ChatTest = ({ socket }) => {
       <pre>
         { JSON.stringify(pos, null, 2) }
       </pre>
-      <form onSubmit={ handleSubmit }>
+      <form onSubmit={ e => handleSubmit(e) }>
         <input
           type="text"
           value={ msg }
-          onChange={ handleChange }
+          onChange={ e => handleChange(e) }
         />
         <button type="submit">Send</button>
       </form>
