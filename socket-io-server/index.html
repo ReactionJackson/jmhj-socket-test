@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0 0 40px 0; }
+      #messages li { display: flex; align-items: center; padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+      #colors { position: fixed; top: 10px; right: 10px; display: flex; list-style-type: none; }
+      #colors li { width: 20px; height: 20px; margin-left: 5px; border-right: 5px; border: 2px solid #fff; }
+      .master { position: fixed; bottom: 50px; right: 10px; display: flex; justify-content: center; align-items: center; color: tomato; font-weight: 600; border-radius: 50%; width: 30px; height: 30px; background-color: gold; border: 4px solid tomato; }
+      .master.minion { background-color: #bbb; border-color: #666; color: #666; }
+      .hidden { display: none !important; }
+      #someBox { position: fixed; left: 50px; top: 50px; width: 50px; height: 50px; border: 10px solid #000; background-color: #fff; }
+      li .master { position: static; margin-right: 10px; }
+    </style>
+  </head>
+  <body>
+    <div id="users">Users online: <span>0</span></div>
+    <ul id="messages"></ul>
+    <div class="master hidden">M</div>
+    <ul id="colors" class="hidden">
+      <li data-color="dodgerblue" style="background: dodgerblue;"></li>
+      <li data-color="tomato" style="background: tomato;"></li>
+      <li data-color="mediumseagreen" style="background: mediumseagreen;"></li>
+    </ul>
+    <div id="someBox"></div>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(function () {
+        var socket = io();
+        var bgc = '#fafafa';
+        var master = false;
+        $('form').submit(function(e){
+          e.preventDefault(); // prevents page reloading
+          socket.emit('chat message', (master ? '<div class="master">K</div>' : '<div class="master minion">M</div>') + $('#m').val());
+          socket.emit('change color', bgc, $('#m').val());
+          $('#m').val('');
+          return false;
+        });
+        $(document).on('keyup', function(e) {
+          switch(e.keyCode) {
+            case 87: //up
+              socket.emit('move box', { x: 0, y: -1 })
+            break;
+            case 83: //down
+              socket.emit('move box', { x: 0, y: 1 })
+            break;
+            case 65: //left
+              socket.emit('move box', { x: -1, y: 0 })
+            break;
+            case 68: //right
+              socket.emit('move box', { x: 1, y: 0 })
+            break;
+          }
+        })
+        $('#colors li').on('click', function() {
+          bgc = $(this).data('color')
+        })
+        socket.on('set master', isMaster => {
+          console.log('isMaster', isMaster)
+          master = isMaster
+          if(master) {
+            $('body > .master').removeClass('hidden')
+            $('#colors').removeClass('hidden')
+          } else {
+            $('body > .master').addClass('hidden')
+          }
+        })
+        socket.on('chat message', msg => {
+          $('#messages').append($('<li>').html(msg))
+          $('html, body').animate({ scrollTop: $(document).height() }, 0)
+        })
+        socket.on('change color', css => {
+          $('#messages li').css(css)
+        })
+        socket.on('update total users', users => {
+          $('#users span').text(users)
+        })
+        socket.on('move box', pos => {
+          $('#someBox').css({
+            left: (50 + (pos.x * 50)) + 'px',
+            top: (50 + (pos.y * 50)) + 'px'
+          })
+        })
+      });
+    </script>
+  </body>
+</html>
