@@ -12,6 +12,6 @@
     "npm": "6.x"
   },
   "scripts": {
-    "start": "concurrently \"node index.js\" \"cd /client && npm run build\""
+    "start": "node index.js"
   }
 }
