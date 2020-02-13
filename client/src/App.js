@@ -5,13 +5,15 @@ import styled from 'styled-components'
 import MouseTest from './components/MouseTest'
 import ChatTest from './components/ChatTest'
 
+const port = process.env.PORT || 3000
+
 const App = () => {
 
   const [ socket, setSocket ] = useState(null)
   const [ clients, setClients ] = useState([])
   const [ uid, setUid ] = useState(null)
 
-  useEffect(() => setSocket(SocketIOClient('https://jmhj-socket-test.herokuapp.com/')), [])
+  useEffect(() => setSocket(SocketIOClient('https://jmhj-socket-test.herokuapp.com/' + port)), [])
 
   useEffect(() => {
     if(socket) {
