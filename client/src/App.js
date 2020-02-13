@@ -6,7 +6,6 @@ import MouseTest from './components/MouseTest'
 import ChatTest from './components/ChatTest'
 
 const port = process.env.PORT || 3000
-const path = process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : `https://jmhj-socket-test.herokuapp.com/${ process.env.PORT }`
 
 const App = () => {
 
@@ -14,7 +13,7 @@ const App = () => {
   const [ clients, setClients ] = useState([])
   const [ uid, setUid ] = useState(null)
 
-  useEffect(() => setSocket(SocketIOClient('https://jmhj-socket-test.herokuapp.com/' + port)), [])
+  useEffect(() => setSocket(SocketIOClient(`https://jmhj-socket-test.herokuapp.com/${ port }`)), [])
 
   useEffect(() => {
     if(socket) {
