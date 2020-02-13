@@ -11,7 +11,7 @@ const App = () => {
   const [ clients, setClients ] = useState([])
   const [ uid, setUid ] = useState(null)
 
-  useEffect(() => setSocket(SocketIOClient('http://127.0.0.1:3000')), [])
+  useEffect(() => setSocket(SocketIOClient('https://jmhj-socket-test.herokuapp.com/')), [])
 
   useEffect(() => {
     if(socket) {
