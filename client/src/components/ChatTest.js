@@ -72,6 +72,8 @@ const ChatTest = ({ socket }) => {
         window.removeEventListener('keyup', moveBox)
       }
 
+      console.log('wow.')
+
     }
   }, [ socket ])
 
